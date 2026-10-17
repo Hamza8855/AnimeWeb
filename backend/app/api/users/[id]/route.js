@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 import connectDB from "@/config/db";
 import User from "@/models/User";
-import authMiddleware from "@/middleware/auth.middleware";
+import authMiddleware from "@/middleware/authMiddleware";
 
 // HELPER
 // CHECK ADMIN

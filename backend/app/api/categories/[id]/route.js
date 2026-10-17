@@ -4,7 +4,7 @@ import connectDB from "@/config/db";
 import Category from "@/models/Category";
 import Video from "@/models/Video";
 import User from "@/models/User";
-import authMiddleware from "@/middleware/auth.middleware";
+import authMiddleware from "@/middleware/authMiddleware";
 
 /*
 |--------------------------------------------------------------------------
