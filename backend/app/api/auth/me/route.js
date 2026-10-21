@@ -4,23 +4,39 @@ import connectDB from "@/config/db";
 import User from "@/models/User";
 import { verifyToken } from "@/lib/auth";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "http://localhost:3000",
-  "Access-Control-Allow-Methods": "GET, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization",
-  "Access-Control-Allow-Credentials": "true",
-};
+const ALLOWED_ORIGINS = [
+  "http://localhost:3000",
+  "https://anime-web-c.vercel.app",
+];
+
+function getCorsHeaders(request) {
+  const origin = request.headers.get("origin");
+  const headers = new Headers();
+
+  if (origin && ALLOWED_ORIGINS.includes(origin)) {
+    headers.set("Access-Control-Allow-Origin", origin);
+    headers.set("Access-Control-Allow-Credentials", "true");
+    headers.set("Vary", "Origin");
+  }
+
+  headers.set("Access-Control-Allow-Methods", "GET, OPTIONS");
+  headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+  return headers;
+}
 
 // Handle browser CORS preflight request
-export async function OPTIONS() {
+export async function OPTIONS(request) {
   return new NextResponse(null, {
-    status: 200,
-    headers: corsHeaders,
+    status: 204,
+    headers: getCorsHeaders(request),
   });
 }
 
 // Get the currently logged-in user
 export async function GET(request) {
+  const headers = getCorsHeaders(request);
+
   try {
     await connectDB();
 
@@ -34,7 +50,7 @@ export async function GET(request) {
         },
         {
           status: 401,
-          headers: corsHeaders,
+          headers,
         },
       );
     }
@@ -51,7 +67,7 @@ export async function GET(request) {
         },
         {
           status: 404,
-          headers: corsHeaders,
+          headers,
         },
       );
     }
@@ -64,7 +80,7 @@ export async function GET(request) {
         },
         {
           status: 403,
-          headers: corsHeaders,
+          headers,
         },
       );
     }
@@ -76,7 +92,7 @@ export async function GET(request) {
       },
       {
         status: 200,
-        headers: corsHeaders,
+        headers,
       },
     );
   } catch (error) {
@@ -89,7 +105,7 @@ export async function GET(request) {
       },
       {
         status: 401,
-        headers: corsHeaders,
+        headers,
       },
     );
   }
