@@ -9,12 +9,29 @@ import authMiddleware from "@/middleware/authMiddleware";
 // CORS HEADERS
 // ======================================================
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "http://localhost:3000",
-  "Access-Control-Allow-Methods": "GET, PUT, PATCH, DELETE, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization",
-  "Access-Control-Allow-Credentials": "true",
-};
+const ALLOWED_ORIGINS = [
+  "http://localhost:3000",
+  "https://anime-web-c.vercel.app",
+];
+
+function getCorsHeaders(request) {
+  const origin = request.headers.get("origin");
+  const headers = new Headers();
+
+  if (origin && ALLOWED_ORIGINS.includes(origin)) {
+    headers.set("Access-Control-Allow-Origin", origin);
+    headers.set("Access-Control-Allow-Credentials", "true");
+    headers.set("Vary", "Origin");
+  }
+
+  headers.set(
+    "Access-Control-Allow-Methods",
+    "GET, PUT, PATCH, DELETE, OPTIONS",
+  );
+  headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+  return headers;
+}
 
 // ======================================================
 // OPTIONS /api/profile
