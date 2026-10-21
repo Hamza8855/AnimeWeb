@@ -1,4 +1,5 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL || "https://anime-web-wjdk.vercel.app";
 
 const MAX_RETRIES = 2;
 const REQUEST_TIMEOUT = 12000;
