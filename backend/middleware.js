@@ -1,50 +1,55 @@
 import { NextResponse } from "next/server";
 
+const ALLOWED_ORIGINS = [
+  "http://localhost:3000",
+  "https://anime-web-c.vercel.app",
+];
+
 export function middleware(request) {
   const origin = request.headers.get("origin");
 
-  // Next.js middleware ko continue karne ke liye response create karte hain
-  const response = NextResponse.next();
+  // Browser ki CORS preflight request
+  if (request.method === "OPTIONS") {
+    const headers = new Headers();
 
-  // Sirf frontend localhost:3000 ko backend API access ki permission
-  // deni hai.
-  if (origin === "http://localhost:3000") {
-    response.headers.set(
-      "Access-Control-Allow-Origin",
-      "http://localhost:3000",
+    if (origin && ALLOWED_ORIGINS.includes(origin)) {
+      headers.set("Access-Control-Allow-Origin", origin);
+      headers.set("Access-Control-Allow-Credentials", "true");
+      headers.set("Vary", "Origin");
+    }
+
+    headers.set(
+      "Access-Control-Allow-Methods",
+      "GET, POST, PUT, PATCH, DELETE, OPTIONS",
     );
+    headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+    return new NextResponse(null, {
+      status: 204,
+      headers,
+    });
   }
 
-  // Browser ko batate hain ke ye HTTP methods allowed hain.
+  const response = NextResponse.next();
+
+  if (origin && ALLOWED_ORIGINS.includes(origin)) {
+    response.headers.set("Access-Control-Allow-Origin", origin);
+    response.headers.set("Access-Control-Allow-Credentials", "true");
+    response.headers.set("Vary", "Origin");
+  }
+
   response.headers.set(
     "Access-Control-Allow-Methods",
     "GET, POST, PUT, PATCH, DELETE, OPTIONS",
   );
-
-  // Browser ko batate hain ke ye request headers allowed hain.
   response.headers.set(
     "Access-Control-Allow-Headers",
     "Content-Type, Authorization",
   );
 
-  // HTTP-only cookies ko cross-origin request mein allow karta hai.
-  response.headers.set("Access-Control-Allow-Credentials", "true");
-
-  // Different origins ke requests ko separately handle karne ke liye.
-  response.headers.set("Vary", "Origin");
-
-  // Browser ki CORS preflight request.
-  if (request.method === "OPTIONS") {
-    return new NextResponse(null, {
-      status: 204,
-      headers: response.headers,
-    });
-  }
-
   return response;
 }
 
-// Middleware sirf /api/... routes par chalega.
 export const config = {
   matcher: "/api/:path*",
 };
