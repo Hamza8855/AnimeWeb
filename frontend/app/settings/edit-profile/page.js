@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL || "https://anime-web-wjdk.vercel.app";
 
 export default function EditProfilePage() {
   const router = useRouter();
@@ -19,7 +20,6 @@ export default function EditProfilePage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  // Load logged-in user's profile
   useEffect(() => {
     let active = true;
 
@@ -28,6 +28,7 @@ export default function EditProfilePage() {
         const response = await fetch(`${API_URL}/api/auth/me`, {
           method: "GET",
           credentials: "include",
+          cache: "no-store",
         });
 
         const result = await response.json();
@@ -38,13 +39,15 @@ export default function EditProfilePage() {
         }
 
         if (!response.ok || result.success === false) {
-          throw new Error(result.message || "Profile load nahi ho saki.");
+          throw new Error(
+            result.message || "Unable to load your profile. Please try again.",
+          );
         }
 
         const user = result.user || result.data?.user;
 
         if (!user) {
-          throw new Error("User information nahi mili.");
+          throw new Error("User information could not be retrieved.");
         }
 
         if (active) {
@@ -54,7 +57,7 @@ export default function EditProfilePage() {
         }
       } catch (err) {
         if (active) {
-          setError(err.message || "Kuch ghalat ho gaya.");
+          setError(err.message || "Something went wrong. Please try again.");
         }
       } finally {
         if (active) {
@@ -70,7 +73,6 @@ export default function EditProfilePage() {
     };
   }, [router]);
 
-  // Update profile
   async function handleSubmit(event) {
     event.preventDefault();
 
@@ -82,29 +84,29 @@ export default function EditProfilePage() {
     const trimmedEmail = email.trim().toLowerCase();
 
     if (!trimmedName) {
-      setError("Name enter karna zaroori hai.");
+      setError("Please enter your full name.");
       return;
     }
 
     if (trimmedName.length > 50) {
-      setError("Name maximum 50 characters ka ho sakta hai.");
+      setError("Your name must not exceed 50 characters.");
       return;
     }
 
     if (!trimmedUsername) {
-      setError("Username enter karna zaroori hai.");
+      setError("Please enter a username.");
       return;
     }
 
     if (!/^[a-zA-Z0-9_]{3,30}$/.test(trimmedUsername)) {
       setError(
-        "Username 3-30 characters ka ho aur sirf letters, numbers ya underscore use kare.",
+        "Username must be 3–30 characters and contain only letters, numbers, or underscores.",
       );
       return;
     }
 
     if (!trimmedEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
-      setError("Valid email address enter karo.");
+      setError("Please enter a valid email address.");
       return;
     }
 
@@ -132,30 +134,25 @@ export default function EditProfilePage() {
       }
 
       if (!response.ok || result.success === false) {
-        throw new Error(result.message || "Profile update nahi hui.");
+        throw new Error(
+          result.message || "Unable to update your profile. Please try again.",
+        );
       }
 
       const user = result.user || result.data?.user;
 
-      if (user) {
-        setName(user.name ?? trimmedName);
-        setUsername(user.username ?? trimmedUsername);
-        setEmail(user.email ?? trimmedEmail);
-      } else {
-        setName(trimmedName);
-        setUsername(trimmedUsername);
-        setEmail(trimmedEmail);
-      }
+      setName(user?.name ?? trimmedName);
+      setUsername(user?.username ?? trimmedUsername);
+      setEmail(user?.email ?? trimmedEmail);
 
-      setSuccess("Profile successfully update ho gayi.");
+      setSuccess("Your profile has been updated successfully.");
     } catch (err) {
-      setError(err.message || "Profile update karte waqt error aaya.");
+      setError(err.message || "An error occurred while updating your profile.");
     } finally {
       setSaving(false);
     }
   }
 
-  // Loading screen
   if (loading) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-black text-white">
@@ -167,7 +164,6 @@ export default function EditProfilePage() {
   return (
     <main className="min-h-screen bg-black px-4 py-10 text-white sm:px-6">
       <div className="mx-auto max-w-2xl">
-        {/* Back link */}
         <Link
           href="/settings"
           className="text-sm text-zinc-400 transition hover:text-red-500"
@@ -175,7 +171,6 @@ export default function EditProfilePage() {
           ← Back to Settings
         </Link>
 
-        {/* Edit Profile Card */}
         <div className="mt-6 rounded-2xl border border-white/10 bg-zinc-950 p-6 sm:p-8">
           <p className="text-sm font-semibold uppercase tracking-widest text-red-500">
             Account Settings
@@ -184,10 +179,9 @@ export default function EditProfilePage() {
           <h1 className="mt-2 text-3xl font-bold">Edit Profile</h1>
 
           <p className="mt-3 text-sm leading-6 text-zinc-400">
-            Apna name, username aur email address update karo.
+            Update your name, username, and email address.
           </p>
 
-          {/* Error message */}
           {error && (
             <div
               role="alert"
@@ -197,7 +191,6 @@ export default function EditProfilePage() {
             </div>
           )}
 
-          {/* Success message */}
           {success && (
             <div
               role="status"
@@ -208,7 +201,6 @@ export default function EditProfilePage() {
           )}
 
           <form onSubmit={handleSubmit} className="mt-7 space-y-5">
-            {/* Name */}
             <div>
               <label
                 htmlFor="name"
@@ -230,7 +222,6 @@ export default function EditProfilePage() {
               />
             </div>
 
-            {/* Username */}
             <div>
               <label
                 htmlFor="username"
@@ -253,12 +244,10 @@ export default function EditProfilePage() {
               />
 
               <p className="mt-2 text-xs text-zinc-500">
-                3-30 characters. Letters, numbers aur underscore use kar sakte
-                ho.
+                Use 3–30 characters, including letters, numbers, or underscores.
               </p>
             </div>
 
-            {/* Email */}
             <div>
               <label
                 htmlFor="email"
@@ -279,11 +268,11 @@ export default function EditProfilePage() {
               />
 
               <p className="mt-2 text-xs text-zinc-500">
-                Email kisi doosre account ke saath registered nahi honi chahiye.
+                Please use an email address that is not already registered to
+                another account.
               </p>
             </div>
 
-            {/* Buttons */}
             <div className="flex flex-col gap-3 pt-3 sm:flex-row">
               <button
                 type="submit"
