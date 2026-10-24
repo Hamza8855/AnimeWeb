@@ -5,11 +5,7 @@ import connectDB from "@/config/db";
 import User from "@/models/User";
 import authMiddleware from "@/middleware/authMiddleware";
 
-const ALLOWED_ORIGINS = [
-  "http://localhost:3000",
-  "https://anime-web-c.vercel.app",
-];
-
+const ALLOWED_ORIGINS = ["https://anime-web-c.vercel.app"];
 function getCorsHeaders(request) {
   const origin = request.headers.get("origin");
   const headers = new Headers();

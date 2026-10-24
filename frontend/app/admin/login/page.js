@@ -28,22 +28,24 @@ export default function AdminLoginPage() {
     try {
       // Hum existing login API ko use kar rahe hain.
       // Backend already email/password verify karta hai aur token cookie mein save karta hai.
-      const response = await fetch("http://localhost:3001/api/auth/login", {
-        method: "POST",
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL || "https://anime-web-wjdk.vercel.app"}/api/auth/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
 
-        headers: {
-          "Content-Type": "application/json",
+          // Ye bohat important hai.
+          // Isse backend ki httpOnly token cookie browser mein save hogi.
+          credentials: "include",
+
+          body: JSON.stringify({
+            email: email.trim(),
+            password,
+          }),
         },
-
-        // Ye bohat important hai.
-        // Isse backend ki httpOnly token cookie browser mein save hogi.
-        credentials: "include",
-
-        body: JSON.stringify({
-          email: email.trim(),
-          password,
-        }),
-      });
+      );
 
       const data = await response.json();
 
@@ -55,11 +57,13 @@ export default function AdminLoginPage() {
 
       // Login successful hai, lekin admin hone ki confirmation
       // hum /api/auth/me se karenge.
-      const meResponse = await fetch("http://localhost:3001/api/auth/me", {
-        method: "GET",
-        credentials: "include",
-      });
-
+      const meResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL || "https://anime-web-wjdk.vercel.app"}/api/auth/me`,
+        {
+          method: "GET",
+          credentials: "include",
+        },
+      );
       const meData = await meResponse.json();
 
       // Agar current user fetch nahi hua.

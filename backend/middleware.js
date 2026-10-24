@@ -1,10 +1,6 @@
 import { NextResponse } from "next/server";
 
-const ALLOWED_ORIGINS = [
-  "http://localhost:3000",
-  "https://anime-web-c.vercel.app",
-];
-
+const ALLOWED_ORIGINS = ["https://anime-web-c.vercel.app"];
 export function middleware(request) {
   const origin = request.headers.get("origin");
 

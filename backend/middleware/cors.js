@@ -1,7 +1,7 @@
 // import { NextResponse } from "next/server";
 
 // const corsHeaders = {
-//   "Access-Control-Allow-Origin": "http://localhost:3000",
+//   "Access-Control-Allow-Origin":
 //   "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
 //   "Access-Control-Allow-Headers": "Content-Type, Authorization",
 //   "Access-Control-Allow-Credentials": "true",
@@ -28,10 +28,7 @@
 
 import { NextResponse } from "next/server";
 
-const ALLOWED_ORIGINS = [
-  "http://localhost:3000",
-  "https://anime-web-c.vercel.app",
-];
+const ALLOWED_ORIGINS = ["https://anime-web-c.vercel.app"];
 
 export function corsMiddleware(request) {
   const origin = request.headers.get("origin");

@@ -1,7 +1,8 @@
 import Link from "next/link";
 import CommentSection from "../../../components/CommentSection";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL || "https://anime-web-wjdk.vercel.app";
 
 function getYoutubeId(video) {
   const value = String(video?.youtubeId || video?.youtubeUrl || "").trim();

@@ -5,12 +5,12 @@ import User from "@/models/User";
 import authMiddleware from "@/middleware/authMiddleware";
 
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "http://localhost:3000",
+  "Access-Control-Allow-Origin": "https://anime-web-c.vercel.app",
   "Access-Control-Allow-Methods": "GET, PATCH, DELETE, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
   "Access-Control-Allow-Credentials": "true",
+  Vary: "Origin",
 };
-
 function jsonResponse(data, status = 200) {
   return NextResponse.json(data, {
     status,

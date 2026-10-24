@@ -3,11 +3,7 @@ import { NextResponse } from "next/server";
 import connectDB from "@/config/db";
 import { login } from "@/controllers/auth.controller";
 
-const ALLOWED_ORIGINS = [
-  "http://localhost:3000",
-  "https://anime-web-c.vercel.app",
-];
-
+const ALLOWED_ORIGINS = ["https://anime-web-c.vercel.app"];
 function getCorsHeaders(request) {
   const origin = request.headers.get("origin");
   const headers = new Headers();
